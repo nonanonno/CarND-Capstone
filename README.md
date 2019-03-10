@@ -72,3 +72,18 @@ cd CarND-Capstone/ros
 roslaunch launch/site.launch
 ```
 5. Confirm that traffic light detection works on real life images
+
+
+# Writeup
+
+This project was tested in follwoing environment.
+
+- Ubuntu 18.04
+- ros melodic
+- cuda 10
+- cudnn 7.5
+- tensorflow-gpu 1.13.1
+
+I used ssd inception v2 coco model to detect traffic lights and the model is in `ros/interface_graph/frozen_interence_graph.pb`.
+This place is written in `ros/src/tl_detector/light_classification/tl_classifier.py` at line 9.
+Because this place is written with absolute path, this shuld be fixed in other environment.
