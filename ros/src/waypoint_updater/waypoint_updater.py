@@ -30,7 +30,7 @@ MAX_DECEL = 0.5
 
 class WaypointUpdater(object):
     def __init__(self):
-        rospy.init_node('waypoint_updater', log_level=rospy.DEBUG)
+        rospy.init_node('waypoint_updater')
 
         rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
@@ -45,11 +45,10 @@ class WaypointUpdater(object):
         self.waypoint_tree = None
 
         self.stopline_wp_idx = -1
-
         self.loop()
 
     def loop(self):
-        rate = rospy.Rate(50)
+        rate = rospy.Rate(10)
         while not rospy.is_shutdown():
             if self.pose and self.base_waypoints:
                 self.publish_waypoints()
@@ -81,7 +80,6 @@ class WaypointUpdater(object):
 
     def generate_lane(self):
         lane = Lane()
-
         closest_idx = self.get_closest_waypoint_idx()
         farthest_idx = closest_idx + LOOKAHEAD_WPS
         base_waypoints = self.base_waypoints.waypoints[closest_idx:farthest_idx]
@@ -101,6 +99,7 @@ class WaypointUpdater(object):
             p.pose = wp.pose
 
             stop_idx = max(self.stopline_wp_idx - closest_idx - 2, 0)
+
             dist = self.distance(waypoints, i, stop_idx)
             rospy.logdebug("wp_debug distance %f", dist)
             vel = math.sqrt(2 * MAX_DECEL * dist)
@@ -142,6 +141,9 @@ class WaypointUpdater(object):
         def dl(a, b): return math.sqrt(
             (a.x-b.x)**2 + (a.y-b.y)**2 + (a.z-b.z)**2)
         for i in range(wp1, wp2+1):
+            if i >= len(waypoints):
+                print(str(len(waypoints)) + ", " + str(i) +
+                      ", " + str(wp1) + ", " + str(wp2))
             dist += dl(waypoints[wp1].pose.pose.position,
                        waypoints[i].pose.pose.position)
             wp1 = i

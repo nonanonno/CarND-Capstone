@@ -11,6 +11,7 @@ import tf
 import cv2
 import yaml
 from scipy.spatial import KDTree
+import time
 
 STATE_COUNT_THRESHOLD = 3
 
@@ -129,13 +130,16 @@ class TLDetector(object):
         """
 
         if(not self.has_image):
-            self.prev_light_loc = None
-            return False
+            return TrafficLight.UNKNOWN
 
         cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
         # Get classification
-        return self.light_classifier.get_classification(cv_image)
+        start = time.time()
+        state = self.light_classifier.get_classification(cv_image)
+        elapsed_time = time.time() - start
+        print("time : {0} [msec]".format(elapsed_time * 1000))
+        return state
         # return light.state
 
     def process_traffic_lights(self):
@@ -152,7 +156,7 @@ class TLDetector(object):
 
         # List of positions that correspond to the line to stop in front of for a given intersection
         stop_line_positions = self.config['stop_line_positions']
-        if(self.pose):
+        if(self.pose and self.waypoints):
             car_wp_idx = self.get_closest_waypoint(self.pose.pose)
 
         # TODO find the closest visible traffic light (if one exists)
