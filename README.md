@@ -84,6 +84,5 @@ This project was tested in follwoing environment.
 - cudnn 7.5
 - tensorflow-gpu 1.13.1
 
-I used ssd inception v2 coco model to detect traffic lights and the model is in `ros/interface_graph/frozen_interence_graph.pb`.
-This place is written in `ros/src/tl_detector/light_classification/tl_classifier.py` at line 9.
-Because this place is written with absolute path, this shuld be fixed in other environment.
+I used ssd inception v2 coco model to detect traffic lights. (https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md)
+For fine-turning with the simulator's traffic lights, I uesed the dataset obtained from https://github.com/alex-lechner/Traffic-Light-Classification .
